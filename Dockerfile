@@ -11,10 +11,10 @@ WORKDIR /api
 COPY requirements.txt requirements.txt
 
 # copy the main code of fastapi
-COPY ./src /api/app
+COPY ./src /api
 
 # launch the unicorn server to run the api
 # If you are running your container behind a TLS Termination Proxy (load balancer) like Nginx or Traefik,
 # add the option --proxy-headers, this will tell Uvicorn to trust the headers sent by that proxy telling it
 # that the application is running behind HTTPS, etc.
-CMD ["uvicorn", "app.main:app",  "--proxy-headers", "--host", "0.0.0.0", "--port", "8000", "--timeout-graceful-shutdown", "3600"]
+CMD ["python", "api/app.py"]

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: team-cooker-app
-          image: rayaberova/team_cooker:main
+          image: rayaberova/team-cooker:main
           imagePullPolicy: Always
           env:
             # env var for postgre connexion
