@@ -1,16 +1,16 @@
--- ==============================
+-- =================================
 --  Insertion de joueurs
--- ==============================
-INSERT INTO foot.joueur (nom, prenom, numero, malus, team_conj) VALUES
-('Dupont', 'Jean', 1, 0, TRUE),
-('Martin', 'Paul', 2, 1, FALSE),
-('Durand', 'Luc', 3, 0, TRUE),
-('Bernard', 'Marc', 4, 2, FALSE),
-('Petit', 'Louis', 5, 0, TRUE);
+-- =================================
+INSERT INTO foot.joueur (nom, prenom, telephone, malus, team_conj) VALUES
+('Dupont', 'Jean', 0600000000, 0, TRUE),
+('Martin', 'Paul', 0600000000, 1, FALSE),
+('Durand', 'Luc', 0600000000, 0, TRUE),
+('Bernard', 'Marc', 0600000000, 2, FALSE),
+('Petit', 'Louis', 0600000000, 0, TRUE);
 
--- ==============================
---  Insertion de notes aléatoires
--- ==============================
+-- ==================================
+--  Insertion de notes entre 0 et 10
+-- ==================================
 INSERT INTO foot.note (id_joueur, gardien, defenseur_lateral, defenseur_central, milieu_defensif, ailier, meneur, attaquant) VALUES
 (1, 5, 8, 2, 7, 3, 4, 1),
 (2, 9, 7, 8, 1, 7, 2, 7),
