@@ -8,7 +8,7 @@ ENV PROJ_LIB=/opt/conda/share/proj
 WORKDIR /api
 
 # copy the requirements list
-COPY requirements_app.txt requirements_app.txt
+COPY requirements.txt requirements.txt
 
 # copy the main code of fastapi
 COPY ./src /api/app
