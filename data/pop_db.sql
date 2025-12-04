@@ -11,7 +11,7 @@ INSERT INTO foot.joueur (nom, prenom, telephone, malus, team_conj) VALUES
 -- ==================================
 --  Insertion de notes entre 0 et 10
 -- ==================================
-INSERT INTO foot.note (id_joueur, gardien, defenseur_lateral, defenseur_central, milieu_defensif, ailier, meneur, attaquant) VALUES
+INSERT INTO foot.notes (id_joueur, gardien, defenseur_lateral, defenseur_central, milieu_defensif, ailier, meneur, attaquant) VALUES
 (1, 5, 8, 2, 7, 3, 4, 1),
 (2, 9, 7, 8, 1, 7, 2, 7),
 (3, 8, 5, 7, 6, 0, 0, 0),

@@ -6,15 +6,15 @@ CREATE TABLE foot.joueur (
     nom            VARCHAR(50) NOT NULL,
     prenom         VARCHAR(50) NOT NULL,
     telephone      NUMERIC(10) NOT NULL,
-    malus          NUMERIC,
-    team_conj      BOOLEAN,
+    malus          INT NOT NULL CHECK (malus BETWEEN 0 AND 10),
+    team_conj      BOOLEAN NOT NULL,
     created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ==============================
---  Table note
+--  Table notes
 -- ==============================
-CREATE TABLE foot.note (
+CREATE TABLE foot.notes (
     id_joueur             INT NOT NULL,
     gardien               INT NOT NULL CHECK (gardien BETWEEN 0 AND 10),
     defenseur_lateral     INT NOT NULL CHECK (defenseur_lateral BETWEEN 0 AND 10),
@@ -23,5 +23,5 @@ CREATE TABLE foot.note (
     ailier                INT NOT NULL CHECK (ailier BETWEEN 0 AND 10),
     meneur                INT NOT NULL CHECK (meneur BETWEEN 0 AND 10),
     attaquant             INT NOT NULL CHECK (attaquant BETWEEN 0 AND 10),
-    FOREIGN KEY (id_joueur) REFERENCES foot.joueur(id_joueur)
+    FOREIGN KEY (id_joueur) REFERENCES foot.joueur(id_joueur) ON DELETE CASCADE
 );
