@@ -9,6 +9,7 @@ WORKDIR /api
 
 # copy the requirements list
 COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # copy the main code of fastapi
 COPY ./src /api
