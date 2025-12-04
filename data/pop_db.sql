@@ -2,11 +2,11 @@
 --  Insertion de joueurs
 -- =================================
 INSERT INTO foot.joueur (nom, prenom, telephone, malus, team_conj) VALUES
-('Dupont', 'Jean', 0600000000, 0, TRUE),
-('Martin', 'Paul', 0600000000, 1, FALSE),
-('Durand', 'Luc', 0600000000, 0, TRUE),
-('Bernard', 'Marc', 0600000000, 2, FALSE),
-('Petit', 'Louis', 0600000000, 0, TRUE);
+('Dupont', 'Jean', '0600000000', 0, TRUE),
+('Martin', 'Paul', '0600000000', 1, FALSE),
+('Durand', 'Luc', '0600000000', 0, TRUE),
+('Bernard', 'Marc', '0600000000', 2, FALSE),
+('Petit', 'Louis', '0600000000', 0, TRUE);
 
 -- ==================================
 --  Insertion de notes entre 0 et 10

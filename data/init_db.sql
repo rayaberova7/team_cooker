@@ -5,7 +5,7 @@ CREATE TABLE foot.joueur (
     id_joueur      SERIAL PRIMARY KEY,
     nom            VARCHAR(50) NOT NULL,
     prenom         VARCHAR(50) NOT NULL,
-    telephone      NUMERIC(10) NOT NULL,
+    telephone      VARCHAR(10) CHECK (telephone ~ '^[0-9]{10}$'),
     malus          INT NOT NULL CHECK (malus BETWEEN 0 AND 10),
     team_conj      BOOLEAN NOT NULL,
     created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
