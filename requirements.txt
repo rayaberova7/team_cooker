@@ -1,0 +1,11 @@
+coverage
+dataclasses
+fastapi
+inquirerPy
+psycopg2-binary
+pytest
+python-dotenv
+regex
+requests
+tabulate
+uvicorn
