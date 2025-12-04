@@ -120,14 +120,14 @@ class JoueurDao(metaclass=Singleton):
             return False
 
     @log
-    def supprimer(self, joueur: Joueur) -> bool:
+    def supprimer(self, id_joueur: int) -> bool:
         """Supprimer un joueur et ses notes (via cascade ou explicitement)"""
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "DELETE FROM foot.joueur WHERE id_joueur = %(id_joueur)s;",
-                        {"id_joueur": joueur.id_joueur},
+                        {"id_joueur": id_joueur},
                     )
                     return cursor.rowcount > 0
         except Exception as e:

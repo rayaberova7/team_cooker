@@ -5,7 +5,11 @@ L'équipe de foot du mercredi de la DG LOL
 
 ```{bash}
 git clone 
-cd team_cooker/
+```
+
+File > Open Folder > /home/onyxia/work/team_cooker/
+
+```{bash}
 pip install -r requirements.txt
 ```
 
@@ -26,3 +30,11 @@ Pour initialiser la BDD :
 ```{python}
 python -m src.utils.reset_database
 ```
+
+Lancer l'API :
+
+```{bash}
+python src/app.py
+```
+Et aller sur le lien fourni lors de l'ouverture du service VSCode
+

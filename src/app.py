@@ -1,180 +1,187 @@
 import logging
+from typing import List
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
-from business_object.joueur import Joueur
-from business_object.notes import Notes
 from service.joueur_service import JoueurService
 from service.notes_service import NotesService
 
 from utils.log_init import initialiser_logs
 
-app = FastAPI(title="Mon webservice")
 
+# -------------------------------------------------------
+# INITIALISATION
+# -------------------------------------------------------
 
 initialiser_logs("Webservice")
-
-joueur_service = JoueurService()
 
 app = FastAPI(title="API Foot – Gestion Joueurs et Équipes")
 
 joueur_service = JoueurService()
 notes_service = NotesService()
 
+
+class EquipesModel(BaseModel):
+    id_joueurs: List[int]
+    taille_equipe: int
+
+
+class JoueurModel(BaseModel):
+    prenom: str
+    nom: str
+    telephone: str
+    malus: int
+    team_conj: bool
+
+
+class NotesModel(BaseModel):
+    id_joueur: int
+    gardien: int
+    defenseur_lateral: int
+    defenseur_central: int
+    milieu_defensif: int
+    ailier: int
+    meneur: int
+    attaquant: int
+
+
+# -------------------------------------------------------
+# ROUTES EQUIPES
+# -------------------------------------------------------
+
+@app.get("/equipes", tags=["Equipes"])
+def lister_joueurs():
+    joueurs = joueur_service.lister_tous()
+    return [j.to_dict() for j in joueurs]
+
+
+@app.post("/equipes", tags=["Equipes"])
+async def creer_equipes(e: EquipesModel):
+    joueurs = []
+
+    for id_j in e.id_joueurs:
+        j = joueur_service.trouver_par_id(id_j)
+        if j is None:
+            raise HTTPException(status_code=404, detail=f"Joueur {id_j} introuvable")
+
+        j.notes = notes_service.recuperer_notes(id_j)
+        joueurs.append(j)
+
+    equipes = joueur_service.creer_equipes(joueurs, e.taille_equipe)
+
+    return equipes
+
+
 # -------------------------------------------------------
 # ROUTES JOUEURS
 # -------------------------------------------------------
 
-@app.get("/joueurs")
-def lister_joueurs():
-    joueurs = joueur_service.lister()
-    return [j.to_dict() for j in joueurs]
-
-
-@app.get("/joueurs/{id_joueur}")
+@app.get("/joueurs/{id_joueur}", tags=["Joueurs"])
 def trouver_joueur(id_joueur: int):
     joueur = joueur_service.trouver_par_id(id_joueur)
     if joueur is None:
         raise HTTPException(status_code=404, detail="Joueur non trouvé")
 
-    notes = notes_service.trouver_par_id_joueur(id_joueur)
+    notes = notes_service.recuperer_notes(id_joueur)
     joueur.notes = notes
 
     return joueur.to_dict()
 
 
-@app.post("/joueurs")
-def creer_joueur(payload: dict):
-    try:
-        joueur = Joueur(
-            prenom=payload["prenom"],
-            nom=payload["nom"],
-            telephone=payload.get("telephone"),
-            malus=payload.get("malus", 0),
-            team_conj=payload.get("team_conj", False),
-        )
-    except KeyError:
-        raise HTTPException(status_code=400, detail="Champs obligatoires manquants")
+@app.post("/joueurs/", tags=["Joueurs"])
+async def creer_joueur(j: JoueurModel):
+    logging.info("Créer un joueur")
 
-    res = joueur_service.creer(joueur)
-    if not res:
-        raise HTTPException(status_code=500, detail="Erreur lors de la création du joueur")
+    joueur = joueur_service.creer(
+        j.prenom,
+        j.nom,
+        j.telephone,
+        j.malus,
+        j.team_conj
+    )
+
+    if not joueur:
+        raise HTTPException(status_code=400, detail="Erreur lors de la création du joueur")
 
     return joueur.to_dict()
 
 
-@app.put("/joueurs/{id_joueur}")
-def modifier_joueur(id_joueur: int, payload: dict):
-    joueur = joueur_service.trouver_par_id(id_joueur)
-    if joueur is None:
-        raise HTTPException(status_code=404, detail="Joueur non trouvé")
-
-    joueur.prenom = payload.get("prenom", joueur.prenom)
-    joueur.nom = payload.get("nom", joueur.nom)
-    joueur.telephone = payload.get("telephone", joueur.telephone)
-    joueur.malus = payload.get("malus", joueur.malus)
-    joueur.team_conj = payload.get("team_conj", joueur.team_conj)
-
-    ok = joueur_service.modifier(joueur)
-    if not ok:
-        raise HTTPException(status_code=500, detail="Erreur lors de la modification")
-
-    return joueur.to_dict()
-
-
-@app.delete("/joueurs/{id_joueur}")
+@app.delete("/joueurs/{id_joueur}", tags=["Joueurs"])
 def supprimer_joueur(id_joueur: int):
     joueur = joueur_service.trouver_par_id(id_joueur)
-    if joueur is None:
-        raise HTTPException(status_code=404, detail="Joueur non trouvé")
-
-    joueur_service.supprimer(joueur)
-    return {"message": "Joueur supprimé"}
+    if joueur:
+        joueur_service.supprimer(id_joueur)
+        return {"message": "Joueur supprimé"}
+    else:
+        return {"message": "Joueur non existant"}
 
 
 # -------------------------------------------------------
 # ROUTES NOTES
 # -------------------------------------------------------
 
-@app.get("/notes/{id_joueur}")
-def get_notes(id_joueur: int):
-    notes = notes_service.trouver_par_id_joueur(id_joueur)
+
+@app.get("/notes/{id_joueur}", tags=["Notes"])
+def visualiser_notes(id_joueur: int):
+    notes = notes_service.recuperer_notes(id_joueur)
     if notes is None:
-        raise HTTPException(status_code=404, detail="Notes non trouvées pour ce joueur")
+        raise HTTPException(status_code=404, detail="Notes non trouvées")
     return notes.to_dict()
 
 
-@app.post("/notes/{id_joueur}")
-def ajouter_notes(id_joueur: int, payload: dict):
-    joueur = joueur_service.trouver_par_id(id_joueur)
+@app.post("/notes/", tags=["Notes"])
+async def ajouter_notes(n: NotesModel):
+    joueur = joueur_service.trouver_par_id(n.id_joueur)
     if joueur is None:
         raise HTTPException(status_code=404, detail="Joueur non trouvé")
 
-    notes = Notes(id_joueur=id_joueur, **payload)
-    ok = notes_service.ajouter(notes)
+    notes = notes_service.ajouter_notes(
+        n.id_joueur,
+        n.gardien,
+        n.defenseur_lateral,
+        n.defenseur_central,
+        n.milieu_defensif,
+        n.ailier,
+        n.meneur,
+        n.attaquant
+    )
 
-    if not ok:
-        raise HTTPException(status_code=500, detail="Erreur lors de l'ajout des notes")
+    if not notes:
+        raise HTTPException(status_code=400, detail="Erreur lors de l'ajout des notes")
 
-    return notes.to_dict()
+    return notes
 
 
-@app.put("/notes/{id_joueur}")
-def modifier_notes(id_joueur: int, payload: dict):
-    notes = notes_service.trouver_par_id_joueur(id_joueur)
-    if notes is None:
-        raise HTTPException(status_code=404, detail="Notes inexistantes")
+@app.post("/notes/", tags=["Notes"])
+async def modifier_notes(n: NotesModel):
+    joueur = joueur_service.trouver_par_id(n.id_joueur)
+    if joueur is None:
+        raise HTTPException(status_code=404, detail="Joueur non trouvé")
 
-    for cle, valeur in payload.items():
-        if hasattr(notes, cle):
-            setattr(notes, cle, valeur)
+    notes = notes_service.supprimer(n.id_joueur)
+    notes = notes_service.ajouter_notes(
+        n.id_joueur,
+        n.gardien,
+        n.defenseur_lateral,
+        n.defenseur_central,
+        n.milieu_defensif,
+        n.ailier,
+        n.meneur,
+        n.attaquant
+    )
 
-    ok = notes_service.modifier(notes)
-    if not ok:
-        raise HTTPException(status_code=500, detail="Erreur lors de la modification des notes")
+    if not notes:
+        raise HTTPException(status_code=400, detail="Erreur lors de l'ajout des notes")
 
     return notes.to_dict()
 
 
 # -------------------------------------------------------
-# ROUTE CRÉATION ÉQUIPES
+# DÉMARRAGE UVICORN
 # -------------------------------------------------------
 
-@app.post("/equipes")
-def creer_equipes(payload: dict):
-    """
-    payload:
-    {
-        "joueurs": [1,2,3,4,5,6,7,8,9,10],
-        "taille_equipe": 5
-    }
-    """
-    try:
-        ids = payload["joueurs"]
-        taille = payload["taille_equipe"]
-    except KeyError:
-        raise HTTPException(status_code=400, detail="Champs manquants")
-
-    liste_joueurs = []
-    for i in ids:
-        j = joueur_service.trouver_par_id(i)
-        if j is None:
-            raise HTTPException(status_code=404, detail=f"Joueur {i} introuvable")
-
-        j.notes = notes_service.trouver_par_id_joueur(i)
-        liste_joueurs.append(j)
-
-    equipes = joueur_service.creer_equipes(liste_joueurs, taille)
-
-    return equipes
-
-
-# Run the FastAPI application
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-
-    logging.info("Arret du Webservice")
+    uvicorn.run(app, host="0.0.0.0", port=9876)
+    logging.info("Arrêt du Webservice")

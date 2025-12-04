@@ -23,6 +23,7 @@ class Notes:
         milieu_defensif,
         ailier,
         meneur,
+        attaquant,
         id_joueur=None
     ):
         """Constructeur"""
@@ -33,6 +34,7 @@ class Notes:
         self.milieu_defensif = milieu_defensif
         self.ailier = ailier
         self.meneur = meneur
+        self.attaquant = attaquant
 
     def __str__(self):
         return (
@@ -40,3 +42,15 @@ class Notes:
             f"defenseur_central={self.defenseur_central}, milieu_defensif={self.milieu_defensif}, "
             f"ailier={self.ailier}, meneur={self.meneur}, attaquant={self.attaquant})"
         )
+
+    def to_dict(self):
+        return {
+            "id_joueur": self.id_joueur,
+            "gardien": self.gardien,
+            "defenseur_lateral": self.defenseur_lateral,
+            "defenseur_central": self.defenseur_central,
+            "milieu_defensif": self.milieu_defensif,
+            "ailier": self.ailier,
+            "meneur": self.meneur,
+            "attaquant": self.attaquant,
+        }

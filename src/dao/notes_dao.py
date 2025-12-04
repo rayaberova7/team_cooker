@@ -16,7 +16,7 @@ class NotesDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         """
-                        INSERT INTO foot.note (
+                        INSERT INTO foot.notes (
                             id_joueur, gardien, defenseur_lateral, defenseur_central,
                             milieu_defensif, ailier, meneur, attaquant
                         ) VALUES (
@@ -41,47 +41,13 @@ class NotesDao(metaclass=Singleton):
             return False
 
     @log
-    def modifier(self, notes: Notes) -> bool:
-        """Modifier les notes existantes d'un joueur"""
-        try:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        UPDATE foot.note
-                        SET gardien=%(gardien)s,
-                            defenseur_lateral=%(defenseur_lateral)s,
-                            defenseur_central=%(defenseur_central)s,
-                            milieu_defensif=%(milieu_defensif)s,
-                            ailier=%(ailier)s,
-                            meneur=%(meneur)s,
-                            attaquant=%(attaquant)s
-                        WHERE id_joueur=%(id_joueur)s;
-                        """,
-                        {
-                            "id_joueur": notes.id_joueur,
-                            "gardien": notes.gardien,
-                            "defenseur_lateral": notes.defenseur_lateral,
-                            "defenseur_central": notes.defenseur_central,
-                            "milieu_defensif": notes.milieu_defensif,
-                            "ailier": notes.ailier,
-                            "meneur": notes.meneur,
-                            "attaquant": notes.attaquant,
-                        },
-                    )
-                    return cursor.rowcount == 1
-        except Exception as e:
-            logging.info(e)
-            return False
-
-    @log
     def trouver_par_id_joueur(self, id_joueur: int) -> Notes | None:
         """Récupérer les notes d’un joueur"""
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT * FROM foot.note WHERE id_joueur=%(id_joueur)s;",
+                        "SELECT * FROM foot.notes WHERE id_joueur=%(id_joueur)s;",
                         {"id_joueur": id_joueur},
                     )
                     res = cursor.fetchone()
@@ -101,3 +67,18 @@ class NotesDao(metaclass=Singleton):
                 attaquant=res["attaquant"]
             )
         return None
+
+    @log
+    def supprimer(self, id_joueur: int) -> bool:
+        """Supprimer les notes d'un joueur"""
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "DELETE FROM foot.notes WHERE id_joueur = %(id_joueur)s;",
+                        {"id_joueur": id_joueur},
+                    )
+                    return cursor.rowcount > 0
+        except Exception as e:
+            logging.info(e)
+            raise

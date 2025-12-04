@@ -1,6 +1,5 @@
 # service/joueur_service.py
 import random
-from tabulate import tabulate
 
 from utils.log_decorator import log
 from business_object.joueur import Joueur
@@ -12,16 +11,22 @@ class JoueurService:
     """Classe regroupant les services métier liés aux joueurs"""
 
     @log
-    def creer(self, joueur: Joueur) -> bool:
-        return JoueurDao().creer(joueur)
+    def creer(self, prenom, nom, telephone, malus, team_conj) -> Joueur:
+        """Création d'un joueur à partir de ses attributs"""
+
+        nouveau_joueur = Joueur(
+            prenom=prenom,
+            nom=nom,
+            telephone=telephone,
+            malus=malus,
+            team_conj=team_conj
+        )
+
+        return nouveau_joueur if JoueurDao().creer(nouveau_joueur) else None
 
     @log
-    def modifier(self, joueur: Joueur) -> bool:
-        return JoueurDao().modifier(joueur)
-
-    @log
-    def supprimer(self, joueur: Joueur) -> bool:
-        return JoueurDao().supprimer(joueur)
+    def supprimer(self, id_joueur: int) -> bool:
+        return JoueurDao().supprimer(id_joueur)
 
     @log
     def trouver_par_id(self, id_joueur: int) -> Joueur | None:

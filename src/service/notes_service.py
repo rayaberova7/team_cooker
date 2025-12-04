@@ -7,17 +7,34 @@ class NotesService:
     """Méthodes de service pour gérer les notes des joueurs"""
 
     @log
-    def ajouter_notes(self, notes: Notes) -> bool:
-        return NotesDao().ajouter(notes)
+    def ajouter_notes(
+        self,
+        id_joueur,
+        gardien,
+        defenseur_lateral,
+        defenseur_central,
+        milieu_defensif,
+        ailier,
+        meneur,
+        attaquant
+    ) -> bool:
+        notes = Notes(
+            id_joueur=id_joueur,
+            gardien=gardien,
+            defenseur_lateral=defenseur_lateral,
+            defenseur_central=defenseur_central,
+            milieu_defensif=milieu_defensif,
+            ailier=ailier,
+            meneur=meneur,
+            attaquant=attaquant
+        )
 
-    @log
-    def modifier_notes(self, notes: Notes) -> bool:
-        return NotesDao().modifier(notes)
+        return NotesDao().ajouter(notes)
 
     @log
     def recuperer_notes(self, id_joueur: int) -> Notes | None:
         return NotesDao().trouver_par_id_joueur(id_joueur)
 
     @log
-    def supprimer_notes(self, id_joueur: int) -> bool:
-        return NotesDao().supprimer_par_joueur(id_joueur)
+    def supprimer(self, id_joueur: int) -> bool:
+        return NotesDao().supprimer(id_joueur)

@@ -43,3 +43,15 @@ class Joueur:
 
     def __str__(self):
         return f"Joueur({self.prenom} {self.nom}, notes={self.notes})"
+
+    def to_dict(self):
+        """Retourne une représentation dictionnaire du joueur (compatible JSON)."""
+        return {
+            "id_joueur": self.id_joueur,
+            "prenom": self.prenom,
+            "nom": self.nom,
+            "telephone": self.telephone,
+            "malus": self.malus,
+            "team_conj": self.team_conj,
+            "notes": self.notes.to_dict() if self.notes else None
+        }
