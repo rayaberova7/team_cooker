@@ -17,4 +17,4 @@ COPY ./src /api
 # If you are running your container behind a TLS Termination Proxy (load balancer) like Nginx or Traefik,
 # add the option --proxy-headers, this will tell Uvicorn to trust the headers sent by that proxy telling it
 # that the application is running behind HTTPS, etc.
-CMD ["python", "api/app.py"]
+CMD ["uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8000"]
