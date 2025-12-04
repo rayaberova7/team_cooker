@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: team-cooker-model-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: team-cooker-model-deployment
+  template:
+    metadata:
+      labels:
+        app: team-cooker-model-deployment
+    spec:
+      containers:
+        - name: team-cooker-app
+          image: rayaberova/team_cooker:main
+          imagePullPolicy: Always
+          env:
+            # env var for postgre connexion
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_SCHEMA
+              value: foot
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: my-postegre-creds
+                  key: hostname
+            - name: POSTGRES_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: my-postegre-creds
+                  key: database
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: my-postegre-creds
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-postegre-creds
+                  key: password
+          resources:
+            limits:
+              memory: "3Gi"
+              cpu: "1000m"
+            requests:
+              memory: "1Gi"
+              cpu: "1000m"

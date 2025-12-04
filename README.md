@@ -34,7 +34,7 @@ python -m src.utils.reset_database
 Lancer l'API :
 
 ```{bash}
-python src/app.py
+python src/main.py
 ```
 Et aller sur le lien fourni lors de l'ouverture du service VSCode
 
