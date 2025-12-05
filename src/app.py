@@ -136,9 +136,9 @@ async def ajouter_ou_modifier_notes(n: NotesModel):
     if joueur is None:
         raise HTTPException(status_code=404, detail="Joueur non trouvé")
 
-    notes = notes_service.recuperer_notes(n.id_joueur)
-    if notes:
-        notes = notes_service.supprimer(n.id_joueur)
+    joueur_has_notes = notes_service.recuperer_notes(n.id_joueur)
+    if joueur_has_notes:
+        notes_service.supprimer(n.id_joueur)
 
     notes = notes_service.ajouter_notes(
         n.id_joueur,
@@ -154,7 +154,7 @@ async def ajouter_ou_modifier_notes(n: NotesModel):
     if not notes:
         raise HTTPException(status_code=400, detail="Erreur lors de l'ajout/modification des notes")
 
-    return notes.to_dict()
+    return notes
 
 
 # -------------------------------------------------------
@@ -163,5 +163,5 @@ async def ajouter_ou_modifier_notes(n: NotesModel):
 
 # if __name__ == "__main__":
 #     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=9876)
+#     uvicorn.run(app, host="0.0.0.0", port=5000)
 #     logging.info("Arrêt du Webservice")
