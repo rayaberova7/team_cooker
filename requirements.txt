@@ -9,3 +9,4 @@ regex
 requests
 tabulate
 uvicorn
+yaml

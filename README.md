@@ -53,6 +53,7 @@ kubectl apply -f cd/deployment-api/
 
 # Voir la création des pods
 kubectl get pods
+# Ils doivent avoir un status Running, si ce n'est pas le cas il faut investiguer
 
 # Vérifier les logs d'un pod précis
 kubectl describe pods team-cooker-model-deployment-XXXXXXXXX
