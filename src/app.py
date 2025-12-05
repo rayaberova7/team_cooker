@@ -131,10 +131,14 @@ def visualiser_notes(id_joueur: int):
 
 
 @app.post("/notes/", tags=["Notes"])
-async def ajouter_notes(n: NotesModel):
+async def ajouter_ou_modifier_notes(n: NotesModel):
     joueur = joueur_service.trouver_par_id(n.id_joueur)
     if joueur is None:
         raise HTTPException(status_code=404, detail="Joueur non trouvé")
+
+    notes = notes_service.recuperer_notes(n.id_joueur)
+    if notes:
+        notes = notes_service.supprimer(n.id_joueur)
 
     notes = notes_service.ajouter_notes(
         n.id_joueur,
@@ -148,31 +152,7 @@ async def ajouter_notes(n: NotesModel):
     )
 
     if not notes:
-        raise HTTPException(status_code=400, detail="Erreur lors de l'ajout des notes")
-
-    return notes
-
-
-@app.post("/notes/", tags=["Notes"])
-async def modifier_notes(n: NotesModel):
-    joueur = joueur_service.trouver_par_id(n.id_joueur)
-    if joueur is None:
-        raise HTTPException(status_code=404, detail="Joueur non trouvé")
-
-    notes = notes_service.supprimer(n.id_joueur)
-    notes = notes_service.ajouter_notes(
-        n.id_joueur,
-        n.gardien,
-        n.defenseur_lateral,
-        n.defenseur_central,
-        n.milieu_defensif,
-        n.ailier,
-        n.meneur,
-        n.attaquant
-    )
-
-    if not notes:
-        raise HTTPException(status_code=400, detail="Erreur lors de l'ajout des notes")
+        raise HTTPException(status_code=400, detail="Erreur lors de l'ajout/modification des notes")
 
     return notes.to_dict()
 
