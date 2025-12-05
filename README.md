@@ -45,6 +45,10 @@ Ouvrir un VSCode avec role admin pour kubernetes puis cloner le dépôt Git.
 Push le code et dans github Actions, lancer le Image Build.
 Une fois que l'image Docker est faite, aller sur VSCode et lancer :
 ```{bash}
+# Supprimer l'ancien déploiement s'il a été fait
+kubectl delete deployments.apps team-cooker-model-deployment 
+
+# Déployer l'API
 kubectl apply -f cd/deployment-api/
 
 # Voir la création des pods

@@ -7,6 +7,8 @@ ENV PROJ_LIB=/opt/conda/share/proj
 # set api as the current work dir
 WORKDIR /api
 
+ENV PYTHONPATH=/api/src
+
 # copy the requirements list
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
