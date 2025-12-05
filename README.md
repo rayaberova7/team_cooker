@@ -3,8 +3,9 @@ L'équipe de foot du mercredi de la DG LOL
 
 ## Getting started
 
+Ouvrir un VSCode sur Onyxia avec le port 9876 d'ouvert
 ```{bash}
-git clone 
+git clone https://github.com/rayaberova7/team_cooker
 ```
 
 File > Open Folder > /home/onyxia/work/team_cooker/
@@ -34,7 +35,21 @@ python -m src.utils.reset_database
 Lancer l'API :
 
 ```{bash}
-python src/app.py
+uvicorn src.app:app --host 0.0.0.0 --port 9876
 ```
 Et aller sur le lien fourni lors de l'ouverture du service VSCode
 
+## Déployer l'API
+
+Ouvrir un VSCode avec role admin pour kubernetes puis cloner le dépôt Git.
+Push le code et dans github Actions, lancer le Image Build.
+Une fois que l'image Docker est faite, aller sur VSCode et lancer :
+```{bash}
+kubectl apply -f cd/deployment-api/
+
+# Voir la création des pods
+kubectl get pods
+
+# Vérifier les logs d'un pod précis
+kubectl describe pods team-cooker-model-deployment-XXXXXXXXX
+```

@@ -181,7 +181,7 @@ async def modifier_notes(n: NotesModel):
 # DÉMARRAGE UVICORN
 # -------------------------------------------------------
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=9876)
-    logging.info("Arrêt du Webservice")
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=9876)
+#     logging.info("Arrêt du Webservice")
