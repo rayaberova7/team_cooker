@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # copy the main code of fastapi
 COPY ./src /api/src
+COPY ./logging_config.yml /api/logging_config.yml
 
 # launch the unicorn server to run the api
 # If you are running your container behind a TLS Termination Proxy (load balancer) like Nginx or Traefik,
